@@ -1,7 +1,7 @@
 # xtide-ruby
 
 ## Setup
-Add `config/initializers/tide_path.rb`
+* Add `config/initializers/tide_path.rb`
 ```ruby
 module Tide
   
@@ -27,10 +27,10 @@ module Tide
   end
 end
 ```
-
+* copy `tide_path.yml.sample` to `config/tide_path.yml`
 
 ## TODO
-* Improve documentation
+* Create rake task for `tide_path.yml.sample`
 
 ## Acknowledgement
 * David Flatter - XTide: Harmonic tide clock and tide predictor (http://www.flaterco.com/xtide).
