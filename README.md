@@ -1,6 +1,6 @@
-==xtide for ruby
+# xtide-ruby
 
-===Setup
+## Setup
 Add `config/initializers/tide_path.rb`
 ```ruby
 module Tide
@@ -29,14 +29,12 @@ end
 ```
 
 
-==TODO
-- Improve documentation
+## TODO
+* Improve documentation
 
-==Acknowledgement
-David Flatter - XTide: Harmonic tide clock and tide predictor (http://www.flaterco.com/xtide).
+## Acknowledgement
+* David Flatter - XTide: Harmonic tide clock and tide predictor (http://www.flaterco.com/xtide).
+* Jeff Barriault - XTideOnRails (https://github.com/barriault/XTideOnRails)
 
-==License
+## License
 The Tide plugin is released under the MIT license.
-
-==Support
-Any questions, enhancement proposals, bug notifications or corrections can be sent to mailto:jeff@barriault.net.
