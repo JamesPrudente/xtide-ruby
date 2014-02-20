@@ -1,18 +1,10 @@
-class LocationNotFoundException < StandardError #:nodoc:
+class LocationNotFoundException < StandardError
 end
 
-# An <tt>ActionWebService::Struct</tt> representation of a location.
-#
-# Fields:
-# * <tt>name</tt> -- The name of the location.
-# * <tt>lat</tt> -- The location's latitude coordinate.
-# * <tt>lng</tt> -- The location's longitude coordinate.
-# * <tt>country</tt> -- The location's country.
-# * <tt>time_zone</tt> -- The location's time zone.
-# * <tt>restriction</tt> -- The location's restriction.
-# * <tt>loc_type</tt> -- The location type.
-# * <tt>reference</tt> -- The reference location if <tt>loc_type</tt> = SUB.
 class Location
+
+  require 'nokogiri'
+
   attr_accessor :name, :lat, :lng, :country, :time_zone, :restriction, :loc_type, :reference
 
   def initialize(params = {})
