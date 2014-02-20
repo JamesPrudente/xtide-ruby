@@ -12,15 +12,14 @@ end
 # * <tt>restriction</tt> -- The location's restriction.
 # * <tt>loc_type</tt> -- The location type.
 # * <tt>reference</tt> -- The reference location if <tt>loc_type</tt> = SUB.
-class Location < ActionWebService::Struct
-  member :name,  :string
-  member :lat,  :string
-  member :lng, :string
-  member :country, :string
-  member :time_zone, :string
-  member :restriction, :string
-  member :loc_type, :string
-  member :reference, :string
+class Location
+  attr_accessor :name, :lat, :lng, :country, :time_zone, :restriction, :loc_type, :reference
+
+  def initialize(params = {})
+    params.each do |i,v|
+      self.send("#{i}=".to_sym, v)
+    end
+  end
 
   # Returns an <tt>Array</tt> of <tt>Location</tt> objects with only the 
   # <tt>name</tt>, <tt>lat</tt>, <tt>lng</tt>, and <tt>loc_type</tt> 
@@ -32,6 +31,22 @@ class Location < ActionWebService::Struct
       name = line[0..50]
       type = line[52..54].upcase
       coords = Location.get_coordinates(line)
+      array << Location.new({ :name => name.rstrip, :loc_type => type, :lat => coords[0], :lng => coords[1] })
+    end
+    return array
+  end
+
+  def self.find_all(q)
+    array = []
+    raw_data = Tide.list_html
+    doc = Nokogiri::HTML(raw_data.join)
+    rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
+    rows[1..-1].each do |row|
+      next unless row.children[0].text =~ /#{q}/
+      
+      name = row.children[0].text
+      type = row.children[1].text
+      coords = Location.get_coordinates_from_html(row.children[2].text)
       array << Location.new({ :name => name.rstrip, :loc_type => type, :lat => coords[0], :lng => coords[1] })
     end
     return array
@@ -122,6 +137,25 @@ class Location < ActionWebService::Struct
   def self.get_coordinates(line)
     coords = []
     array = line[56..line.length].chomp.split(",")
+    re = /(\d+).(\d+)/
+    md = re.match(array[0])
+    if array[0] =~ /S/
+      coords[0] = (-1.0 * md[0].to_f).to_s
+    else
+      coords[0] = (md[0].to_f).to_s
+    end
+    md = re.match(array[1])
+    if array[1] =~ /W/
+      coords[1] = (-1.0 * md[0].to_f).to_s
+    else
+      coords[1] = (md[0].to_f).to_s
+    end
+    return coords
+  end
+
+  def self.get_coordinates_from_html(line)
+    coords = []
+    array = line.split(",")
     re = /(\d+).(\d+)/
     md = re.match(array[0])
     if array[0] =~ /S/

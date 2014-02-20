@@ -1,5 +1,5 @@
 require 'xtide-ruby/event'
-require 'xtide-ruby/events'
 require 'xtide-ruby/location'
+require 'xtide-ruby/point'
 require 'xtide-ruby/graph'
 require 'xtide-ruby/tide'

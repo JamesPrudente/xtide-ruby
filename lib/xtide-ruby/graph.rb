@@ -1,24 +1,19 @@
-class Point < ActionWebService::Struct
-  member :x, :float
-  member :y, :float
-  
-  def inspect
-    "[#{x}, #{y}]"
-  end
-end
+class Graph
+  attr_accessor :location, :events, :series
 
-class Graph < ActionWebService::Struct
-  member :location,   Location
-  member :events,     Events
-  member :series,     [Point]
+  def initialize(params = {})
+    params.each do |i,v|
+      self.send("#{i}=".to_sym, v)
+    end
+  end
   
   def self.by_location(name, year, month, day)
     if Graph.is_day_of_month(year, month, day)
       begin_time = Time.local(year, month, day)
-      end_time = begin_time + (24 * 60 * 60) + 1
+      end_time = begin_time + (24 * 60 * 60 * 3) + 1
       
       location = Location.find_by_name(name)
-      events = Events.by_location(name, begin_time, end_time)
+      events = Event.by_location(name, begin_time, end_time)
 
       tz = TZInfo::Timezone.get(location.time_zone)
       b = tz.local_to_utc(begin_time)
