@@ -67,6 +67,3 @@ Tide::Graph.by_location("Amelia Earhart Dam, Mystic River, Boston Harbor, Massac
 ## Acknowledgement
 * David Flatter - XTide: Harmonic tide clock and tide predictor (http://www.flaterco.com/xtide).
 * Jeff Barriault - XTideOnRails (https://github.com/barriault/XTideOnRails)
-
-## License
-The Tide plugin is released under the MIT license.
