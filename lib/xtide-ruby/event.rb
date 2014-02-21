@@ -19,7 +19,7 @@ module Tide
       
       events = []
       
-      Tide.plain_csv(name, b, e).each do |line|
+      Command.plain_csv(name, b, e).each do |line|
         fields = line.split(",")
         time = Time.parse(fields[1] + " " + fields[2])
         event_time = tz.utc_to_local(time).strftime("%I:%M %p")

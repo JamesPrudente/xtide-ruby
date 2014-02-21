@@ -5,8 +5,9 @@ module Tide
   class Location
 
     require 'nokogiri'
+    require 'geocoder'
 
-    attr_accessor :name, :lat, :lng, :country, :time_zone, :restriction, :loc_type, :reference
+    attr_accessor :name, :lat, :lng, :country, :time_zone, :restriction, :loc_type, :reference, :distance, :units
 
     def initialize(params = {})
       params.each do |i,v|
@@ -14,9 +15,9 @@ module Tide
       end
     end
 
-    def self.list_all
+    def self.list
       array = []
-      raw_data = Tide.list
+      raw_data = Command.list
       raw_data[2..raw_data.length - 1].each do |line|
         name = line[0..50]
         type = line[52..54].upcase
@@ -26,13 +27,13 @@ module Tide
       return array
     end
 
-    def self.find_all(q)
+    def self.where(args)
       array = []
-      raw_data = Tide.list_html
+      raw_data = Command.list_html
       doc = Nokogiri::HTML(raw_data.join)
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
-        next unless row.children[0].text =~ /#{q}/
+        next unless row.children[0].text =~ /#{args[:name]}/
         
         name = row.children[0].text
         type = row.children[1].text
@@ -44,7 +45,7 @@ module Tide
 
     # Returns the <tt>Location</tt> for +name+.
     def self.find_by_name(name)
-      raw_data = Tide.about(name)
+      raw_data = Command.about(name)
       loc = Location.new
       # figure out columns in data
       a = raw_data[0].reverse.chop.chop.chop.chop.reverse.strip
@@ -66,15 +67,15 @@ module Tide
         re = /(\d+).(\d+)/
         md = re.match(coordinates[0])
         if coordinates[0] =~ /S/
-          loc.lat = (-1.0 * md[0].to_f).to_s
+          loc.lat = (-1.0 * md[0].to_f)
         else
-          loc.lat = (md[0].to_f).to_s
+          loc.lat = (md[0].to_f)
         end
         md = re.match(coordinates[1])
         if coordinates[1] =~ /W/
-          loc.lng = (-1.0 * md[0].to_f).to_s
+          loc.lng = (-1.0 * md[0].to_f)
         else
-          loc.lng = (md[0].to_f).to_s
+          loc.lng = (md[0].to_f)
         end
       end
 
@@ -108,18 +109,24 @@ module Tide
       raise LocationNotFoundException.new("location #{name} not found")
     end
     
-    # Returns the <tt>Location</tt> for latitude = +lat+ and longitude = +lng+.
-    def self.find_by_coordinates(coords)
-      if coords.kind_of?(Array)
-        Location.list_all.each do |loc|
-          if loc.lat == coords[0] && loc.lng == coords[1]
-            return Location.find_by_name(loc.name)
-          end
+    def self.near(args)
+      locations = []
+      units = args[:units] || :miles
+      threshold = args[:threshold] || 50.0
+      threshold *= 0.621371 if units == :kilometers
+
+      Location.list.each do |loc|
+        distance_in_miles = Geocoder::Calculations.distance_between([args[:lat], args[:lng]], [loc.lat, loc.lng])
+        distance_in_kilometers = distance_in_miles * 1.60934
+        distance_for_threshold = units == :miles ? distance_in_miles : distance_in_kilometers
+
+        if distance_for_threshold < threshold
+          loc.distance = distance_for_threshold
+          loc.units = units
+          locations << loc
         end
-      else
-        raise "Invalid coordinates."
       end
-      raise LocationNotFoundException.new("Location not found for coordinates lat = #{coords[0]}, lng = #{coords[1]}.")
+      locations.sort_by { |l| l.distance }
     end
 
     private
@@ -130,15 +137,15 @@ module Tide
       re = /(\d+).(\d+)/
       md = re.match(array[0])
       if array[0] =~ /S/
-        coords[0] = (-1.0 * md[0].to_f).to_s
+        coords[0] = (-1.0 * md[0].to_f)
       else
-        coords[0] = (md[0].to_f).to_s
+        coords[0] = (md[0].to_f)
       end
       md = re.match(array[1])
       if array[1] =~ /W/
-        coords[1] = (-1.0 * md[0].to_f).to_s
+        coords[1] = (-1.0 * md[0].to_f)
       else
-        coords[1] = (md[0].to_f).to_s
+        coords[1] = (md[0].to_f)
       end
       return coords
     end
@@ -149,15 +156,15 @@ module Tide
       re = /(\d+).(\d+)/
       md = re.match(array[0])
       if array[0] =~ /S/
-        coords[0] = (-1.0 * md[0].to_f).to_s
+        coords[0] = (-1.0 * md[0].to_f)
       else
-        coords[0] = (md[0].to_f).to_s
+        coords[0] = (md[0].to_f)
       end
       md = re.match(array[1])
       if array[1] =~ /W/
-        coords[1] = (-1.0 * md[0].to_f).to_s
+        coords[1] = (-1.0 * md[0].to_f)
       else
-        coords[1] = (md[0].to_f).to_s
+        coords[1] = (md[0].to_f)
       end
       return coords
     end

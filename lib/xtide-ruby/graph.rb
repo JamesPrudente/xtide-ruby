@@ -23,7 +23,7 @@ module Tide
 
         series = []
 
-        Tide.raw_csv(name, b, e).each do |line|
+        Command.raw_csv(name, b, e).each do |line|
           fields = line.split(",")
           x = fields[1].to_f
           y = fields[2].to_f
