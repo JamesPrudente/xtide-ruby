@@ -15,6 +15,37 @@ module Tide
       end
     end
 
+    def units(events = nil)
+      events ||= Tide::Event.by_location(@name, Time.now, Time.now.advance(days: 1))[:events]
+      events.reject { |e| e.tide_height.blank? }.first.tide_height.include?('ft') ? 'ft' : 'm'
+    end
+
+    def current_tide(series = nil)
+      date = Time.now
+      series ||= Tide::Graph.by_location(@name, date.year, date.month, date.day).series
+      series.min_by { |p| (p.x.to_f - date.to_i).abs }.y
+    end
+
+    def todays_high(series = nil)
+      date = Time.at(series.first.x).in_time_zone(@time_zone)
+      end_of_day = date.end_of_day.to_i
+      series ||= Tide::Graph.by_location(@name, date.year, date.month, date.day).series
+      series.reject! { |p| p.x > end_of_day }
+      y_values = series.collect { |p| p.y }
+      index = y_values.index(y_values.max)
+      series[index]
+    end
+
+    def todays_low(series = nil)
+      date = Time.at(series.first.x).in_time_zone(@time_zone)
+      end_of_day = date.end_of_day.to_i
+      series ||= Tide::Graph.by_location(@name, date.year, date.month, date.day).series
+      series.reject! { |p| p.x > end_of_day }
+      y_values = series.collect { |p| p.y }
+      index = y_values.index(y_values.min)
+      series[index]
+    end
+
     def self.list
       array = []
       raw_data = Command.list
@@ -34,7 +65,7 @@ module Tide
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
         next unless row.children[0].text =~ /#{args[:name]}/
-        
+
         name = row.children[0].text
         type = row.children[1].text
         coords = Location.get_coordinates_from_html(row.children[2].text)
@@ -99,7 +130,7 @@ module Tide
         else
           loc.loc_type = "SUB"
         end
-      end        
+      end
 
       loc.reference = hash["Reference"]
 
@@ -108,7 +139,7 @@ module Tide
       STDERR.puts "location #{name} not found"
       raise LocationNotFoundException.new("location #{name} not found")
     end
-    
+
     def self.near(args)
       locations = []
       units = args[:units] || :miles
