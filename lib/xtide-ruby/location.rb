@@ -64,7 +64,7 @@ module Tide
       doc = Nokogiri::HTML(raw_data.join)
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
-        next unless row.children[0].text.unpack("C*").pack("U*").split(",") =~ /#{args[:name]}/
+        next unless row.children[0].text.encode("UTF-8")=~ /#{args[:name]}/
 
         name = row.children[0].text
         type = row.children[1].text
@@ -183,7 +183,7 @@ module Tide
 
     def self.get_coordinates_from_html(line)
       coords = []
-      array = line.unpack("C*").pack("U*").split(",")
+      array = line.encode("UTF-8")
       re = /(\d+).(\d+)/
       md = re.match(array[0])
       if array[0] =~ /S/
