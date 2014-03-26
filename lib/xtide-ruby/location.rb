@@ -183,7 +183,7 @@ module Tide
 
     def self.get_coordinates_from_html(line)
       coords = []
-      array = line.split(",")
+      array = line.unpack("C*").pack("U*").split(",")
       re = /(\d+).(\d+)/
       md = re.match(array[0])
       if array[0] =~ /S/
