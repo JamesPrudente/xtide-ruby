@@ -182,22 +182,8 @@ module Tide
     end
 
     def self.get_coordinates_from_html(line)
-      coords = []
-      array = line.force_encoding("ISO-8859-1").encode("UTF-8")
-      re = /(\d+).(\d+)/
-      md = re.match(array[0])
-      if array[0] =~ /S/
-        coords[0] = (-1.0 * md[0].to_f)
-      else
-        coords[0] = (md[0].to_f)
-      end
-      md = re.match(array[1])
-      if array[1] =~ /W/
-        coords[1] = (-1.0 * md[0].to_f)
-      else
-        coords[1] = (md[0].to_f)
-      end
-      return coords
+      coord_string = line.force_encoding("ISO-8859-1").encode("UTF-8")
+      coord_string.split(",").map { |c| c.match(/(\d+).(\d+)/)[0].to_f }
     end
   end
 
