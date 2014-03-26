@@ -64,7 +64,7 @@ module Tide
       doc = Nokogiri::HTML(raw_data.join)
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
-        next unless row.children[0].text =~ /#{args[:name]}/
+        next unless row.children[0].text.unpack("C*").pack("U*").split(",") =~ /#{args[:name]}/
 
         name = row.children[0].text
         type = row.children[1].text
