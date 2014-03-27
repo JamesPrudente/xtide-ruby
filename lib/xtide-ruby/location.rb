@@ -182,8 +182,14 @@ module Tide
     end
 
     def self.get_coordinates_from_html(line)
+      coords = []
       coord_string = line.force_encoding("ISO-8859-1").encode("UTF-8")
-      coord_string.split(",").map { |c| c.match(/(\d+).(\d+)/)[0].to_f }
+      coord_string.split(",").each do |coord|
+        bearing = coord.match(/(\d+).(\d+)/)[0]
+        heading = coord =~ /S|W/ ? "-" : "+"
+        coords << "#{heading}#{bearing}".to_f
+      end
+      coords
     end
   end
 
