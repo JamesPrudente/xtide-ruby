@@ -52,7 +52,7 @@ module Tide
       raw_data[2..raw_data.length - 1].each do |line|
         name = line[0..50]
         type = line[52..54].upcase
-        coords = Location.get_coordinates(line)
+        coords = Location.get_coordinates(line.force_encoding("ISO-8859-1").encode("UTF-8"))
         array << Location.new({ :name => name.rstrip, :loc_type => type, :lat => coords[0], :lng => coords[1] })
       end
       return array
