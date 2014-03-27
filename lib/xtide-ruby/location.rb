@@ -94,7 +94,7 @@ module Tide
       loc.name = hash["Name"]
 
       unless hash["Coordinates"].nil?
-        coordinates = hash["Coordinates"].split(",")
+        coordinates = hash["Coordinates"].force_encoding("ISO-8859-1").encode("UTF-8").split(",")
         re = /(\d+).(\d+)/
         md = re.match(coordinates[0])
         if coordinates[0] =~ /S/
