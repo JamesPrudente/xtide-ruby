@@ -2,7 +2,7 @@ module Tide
 
   class Point
     attr_accessor :x, :y
-    
+
     def initialize(params = {})
       params.each do |i,v|
         self.send("#{i}=".to_sym, v)

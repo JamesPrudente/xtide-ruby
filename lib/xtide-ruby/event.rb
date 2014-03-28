@@ -12,14 +12,14 @@ module Tide
     # Return the <tt>Events</tt> for the given location +name+.
     def self.by_location(name, begin_time, end_time)
       location = Location.find_by_name(name)
-     
+
       tz = TZInfo::Timezone.get(location.time_zone)
       b = tz.local_to_utc(begin_time)
       e = tz.local_to_utc(end_time)
-      
+
       events = []
-      
-      Command.plain_csv(name, b, e).each do |line|
+
+      Client::Command.plain_csv(name, b, e).each do |line|
         fields = line.split(",")
         time = Time.parse(fields[1] + " " + fields[2])
         event_time = tz.utc_to_local(time).strftime("%I:%M %p")

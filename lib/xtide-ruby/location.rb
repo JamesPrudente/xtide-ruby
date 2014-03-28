@@ -1,7 +1,8 @@
-class LocationNotFoundException < StandardError
-end
-
 module Tide
+
+  class LocationNotFoundException < StandardError
+  end
+
   class Location
 
     require 'nokogiri'
@@ -48,7 +49,7 @@ module Tide
 
     def self.list
       array = []
-      raw_data = Command.list
+      raw_data = Client::Command.list
       raw_data[2..raw_data.length - 1].each do |line|
         name = line[0..50]
         type = line[52..54].upcase
@@ -60,7 +61,7 @@ module Tide
 
     def self.where(args)
       array = []
-      raw_data = Command.list_html
+      raw_data = Client::Command.list_html
       doc = Nokogiri::HTML(raw_data.join)
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
@@ -76,7 +77,7 @@ module Tide
 
     # Returns the <tt>Location</tt> for +name+.
     def self.find_by_name(name)
-      raw_data = Command.about(name)
+      raw_data = Client::Command.about(name)
       loc = Location.new
       # figure out columns in data
       a = raw_data[0].reverse.chop.chop.chop.chop.reverse.strip
