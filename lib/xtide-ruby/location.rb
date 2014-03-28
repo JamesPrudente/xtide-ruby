@@ -52,7 +52,7 @@ module Tide
       raw_data[2..raw_data.length - 1].each do |line|
         name = line[0..50]
         type = line[52..54].upcase
-        coords = Location.get_coordinates(line.force_encoding("ISO-8859-1").encode("UTF-8"))
+        coords = Location.get_coordinates(line)
         array << Location.new({ :name => name.rstrip, :loc_type => type, :lat => coords[0], :lng => coords[1] })
       end
       return array
@@ -64,7 +64,7 @@ module Tide
       doc = Nokogiri::HTML(raw_data.join)
       rows = doc.search('tr').reject { |r| r.children.collect { |c| c.name }.include? 'th' }
       rows[1..-1].each do |row|
-        next unless row.children[0].text.force_encoding("ISO-8859-1").encode("UTF-8") =~ /#{args[:name]}/
+        next unless row.children[0].text =~ /#{args[:name]}/
 
         name = row.children[0].text
         type = row.children[1].text
@@ -94,7 +94,7 @@ module Tide
       loc.name = hash["Name"]
 
       unless hash["Coordinates"].nil?
-        coordinates = hash["Coordinates"].force_encoding("ISO-8859-1").encode("UTF-8").split(",")
+        coordinates = hash["Coordinates"].split(",")
         re = /(\d+).(\d+)/
         md = re.match(coordinates[0])
         if coordinates[0] =~ /S/
@@ -183,7 +183,7 @@ module Tide
 
     def self.get_coordinates_from_html(line)
       coords = []
-      coord_string = line.force_encoding("ISO-8859-1").encode("UTF-8")
+      coord_string = line
       coord_string.split(",").each do |coord|
         bearing = coord.match(/(\d+).(\d+)/)[0]
         heading = coord =~ /S|W/ ? "-" : "+"
