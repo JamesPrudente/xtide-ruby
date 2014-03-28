@@ -2,15 +2,13 @@ module Tide
 
   module Client
 
-    @@path = 'tide'
-
     def self.new(options = {})
-      @@path = options[:path] || 'tide'
-      self
+      @path = options[:path] || 'tide'
+      return self
     end
 
-    def self.path
-      @@path
+    def self.get_path
+      "#{@path}"
     end
 
   end

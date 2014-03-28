@@ -8,7 +8,7 @@ module Tide
     class Command
 
       def self.execute(options = {})
-        command = Client.path
+        command = Client.get_path
         if options.kind_of? Hash
           if options.key?(:b)
             b = options[:b].strftime("%Y-%m-%d %H:%M")
@@ -64,6 +64,7 @@ module Tide
         data = IO.popen(command)
         raw_data = data.readlines.map { |l| l.force_encoding("ISO-8859-1").encode("UTF-8") }
         data.close
+        command = nil
 
         if raw_data.empty?
           raise TideFatalException.new("No results returned for command: #{command}")
