@@ -6,7 +6,7 @@ module Tide
   class Command
 
     def self.execute(options = {})
-        command = String.new TidePath.get()
+        command = 'tide'
         if options.kind_of? Hash
 
           if options.key?(:b)
