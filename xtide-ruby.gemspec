@@ -1,5 +1,5 @@
 #-*- encoding: utf-8 -*-
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 Gem::Specification.new do |spec|
   spec.name          = "xtide-ruby"
@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'tzinfo'
   spec.add_runtime_dependency 'nokogiri'
   spec.add_runtime_dependency 'geocoder'
+  spec.add_runtime_dependency 'activesupport'
 end
