@@ -18,7 +18,7 @@ module Tide
 
     def units(events = nil)
       events ||= Tide::Event.by_location(@name, Time.now, Time.now.advance(days: 1))[:events]
-      events.reject { |e| e.tide_height.blank? }.first.tide_height.include?('ft') ? 'ft' : 'm'
+      events.reject { |e| e.tide_height.empty? }.first.tide_height.include?('ft') ? 'ft' : 'm'
     end
 
     def current_tide(series = nil)

@@ -64,7 +64,6 @@ module Tide
         data = IO.popen(command)
         raw_data = data.readlines.map { |l| l.force_encoding("ISO-8859-1").encode("UTF-8") }
         data.close
-        command = nil
 
         if raw_data.empty?
           raise TideFatalException.new("No results returned for command: #{command}")
