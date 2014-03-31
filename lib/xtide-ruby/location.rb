@@ -27,6 +27,20 @@ module Tide
       series.min_by { |p| (p.x.to_f - date.to_i).abs }.y
     end
 
+    def current_direction(series = nil)
+      date = Time.now
+      direction = ''
+      series ||= Tide::Graph.by_location(@name, date.year, date.month, date.day).series
+      current_point = series.min_by { |p| (p.x.to_f - date.to_i).abs }
+      current_index = series.index(current_point)
+      series[current_index..series.length].each do |point|
+        next if point.y == current_point.y
+        direction = point.y > current_point.y ? 'rising' : 'receding'
+        break
+      end
+      direction
+    end
+
     def todays_high(series = nil)
       date = Time.at(series.first.x).in_time_zone(@time_zone)
       end_of_day = date.end_of_day.to_i
