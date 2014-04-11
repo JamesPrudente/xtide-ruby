@@ -1,5 +1,5 @@
 #-*- encoding: utf-8 -*-
-VERSION = "0.6.3"
+VERSION = "0.6.4"
 
 Gem::Specification.new do |spec|
   spec.name          = "xtide-ruby"

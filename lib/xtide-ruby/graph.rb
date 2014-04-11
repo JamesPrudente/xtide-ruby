@@ -12,7 +12,7 @@ module Tide
     def self.by_location(name, year, month, day)
       if Graph.is_day_of_month(year, month, day)
         begin_time = Time.local(year, month, day)
-        end_time = begin_time + (24 * 60 * 60 * 3) + 2
+        end_time = begin_time + (24 * 60 * 60 * 5) + 2
 
         location = Location.find_by_name(name)
         events = Event.by_location(name, begin_time, end_time)
