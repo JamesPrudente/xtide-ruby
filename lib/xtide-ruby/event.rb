@@ -25,7 +25,7 @@ module Tide
         event_time = tz.utc_to_local(time).strftime("%I:%M %p")
         tide_height = fields[3]
         event_type = fields[4].gsub /\n/, ''
-        event = Event.new(:event_time => event_time, :event_type => event_type, :tide_height => tide_height)
+        event = Event.new(:event_time => time, :event_type => event_type, :tide_height => tide_height)
         events << event
       end
       return { :day => tz.utc_to_local(b).strftime("%A, %B %d, %Y"), :date => tz.utc_to_local(b), :events => events }
