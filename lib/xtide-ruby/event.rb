@@ -9,9 +9,13 @@ module Tide
       end
     end
 
-    # Return the <tt>Events</tt> for the given location +name+.
     def self.by_location(name, begin_time, end_time)
       location = Location.find_by_name(name)
+      by_location( location, name, begin_time, end_time)
+    end
+
+    # Return the <tt>Events</tt> for the given location +name+.
+    def self.by_location( location, name, begin_time, end_time)
 
       tz = TZInfo::Timezone.get(location.time_zone)
       b = tz.local_to_utc(begin_time)
